@@ -4,6 +4,136 @@
 #include <stdlib.h>
 #include <string.h>
 
+void verificaAloc(char *arq);
+int tiraExtensao(char *s);
+void invert(char *nomearq, FILE *arq, char *ext);
+void cript(char *nomearq, FILE *arq, char *ext, char *chave);
+void UnixToDos(char *nomearq, FILE *arq);
+void DosToUnix(char *nomearq, FILE *arq);
+
+
+int main(int argc, char *argv[]){
+    setlocale(LC_ALL, "portuguese");
+    FILE *entrada;
+    char *narquivo, tipo, *chave, *extensao;;
+	int f = 0;
+	
+	// Aloca memória para o nome do arquivo
+    narquivo = (char*) malloc(20);
+    verificaAloc(narquivo);
+    
+    // Aloca memória para a extensão
+    extensao = (char*) malloc(4);
+    verificaAloc(extensao);
+    
+    // Recebe o nome do arquivo digitado na linha de comando ou pede o nome do arquivo
+    do{
+	    if(argc >= 2 && f == 0){
+	        strcpy(narquivo, argv[1]);
+	        f = 1;
+		}
+	    else {
+	    	do{
+	        	printf("--------------------------------------------------------\n");
+	        	printf("|  Forneça o nome do arquivo: ");
+	        	gets(narquivo);
+			}while(strchr(narquivo,'.') == NULL);
+	    }
+	}while(strlen(strchr(narquivo, '.')) > 4);
+	f = 0;
+	
+    // Copia a extensao do nome do arquivo na variável extensão
+    strcpy(extensao, strchr(narquivo,'.'));
+	
+	// Abre o arquivo
+    entrada = fopen(narquivo, "r");
+    if(entrada == NULL){
+        printf("|=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n");
+        printf("|  Não foi possível localizar o arquivo <%s> \n", narquivo);
+        printf("--------------------------------------------------------\n");
+        exit(1);
+    }
+    
+    // Tira a extensão do nome do arquivo
+	tiraExtensao(narquivo);
+	
+	// Recebe o tipo de conversão digitado na linha de comando ou pede o tipo de conversão
+    if(argc >= 3 && f == 0){
+            tipo = argv[2][0];
+            f = 1;
+    }
+    else{
+        printf("--------------------------------------------------------\n");
+        printf("|                                                      |\n");
+        printf("|   I -> O tipo de conversão deve ser o Invert.        |\n");
+		printf("|   C -> O tipo de conversão deve ser o Cript.         |\n");
+		printf("|   D -> Arquivo texto UNIX, gerar arquivo texto DOS.  |\n");
+		printf("|   U -> Arquivo texto DOS, gerar arquivo texto UNIX.  |\n");
+        printf("|                                                      |\n");
+		printf("--------------------------------------------------------\n");
+		printf("|     Escolha um tipo de conversão de arquivo          |\n");
+        printf("|       (LETRA MAIUSCULA PLEASE): ");
+		tipo = getche();
+		printf("                    |\n");
+		printf("--------------------------------------------------------\n");
+    }
+	
+    voltaaquimeu:
+    
+    // Faz a rotina de acordo com a escolha do tipo de conversão
+    switch(tipo){
+    	// Cria um arquivo complemento de 1 do arquivo de entrada
+        case 'I':
+            invert(narquivo, entrada, extensao);
+            break;
+		
+		// Cria um arquivo criptografado do arquivo de entrada
+        case 'C':
+            chave = (char*) malloc(20);
+            verificaAloc(chave);
+            if(argc >= 4)
+                strcpy(chave, argv[3]);
+            else{
+                printf("|     Digite a chave: ");
+                scanf("%s", chave);
+                printf("|=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-|\n");
+            }
+            cript(narquivo, entrada, extensao, chave);
+            free(chave);
+            break;
+            
+		// Converte um arquivo Unix para um arquivo Dos
+        case 'D':
+        	UnixToDos(narquivo, entrada);
+            break;
+
+		// Converte um arquivo Dos para um arquivo Unix
+        case 'U':
+        	DosToUnix(narquivo, entrada);
+            break;
+
+		// Se o usuário for burro e escolher um tipo inválido, pede para digitar até ser um tipo válido
+        default:
+            while(tipo!='I' && tipo!='C' && tipo!='D' && tipo!='U'){
+                printf("|  Tipo de conversão inválida! Digite novamente: ");
+                tipo = getche();
+                printf("     |\n");
+            }
+            printf("|=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-|\n");
+            goto voltaaquimeu;
+            break;
+    }
+	
+	// Libera espaço alocado
+	free(narquivo);
+	free(extensao);
+	
+	// Fechar o arquivo de entrada
+    fclose(entrada);
+    return 0;
+}
+
+
 void verificaAloc(char *arq){
 	if(arq == NULL){
         printf("|  Memória insuficiente       ");
@@ -159,117 +289,3 @@ void DosToUnix(char *nomearq, FILE *arq){
 
 
 
-int main(int argc, char *argv[]){
-    setlocale(LC_ALL, "portuguese");
-    FILE *entrada;
-    char *narquivo, tipo, *chave, *extensao;;
-	
-	// Aloca memória para o nome do arquivo
-    narquivo = (char*) malloc(20);
-    verificaAloc(narquivo);
-    
-    // Aloca memória para a extensão
-    extensao = (char*) malloc(4);
-    verificaAloc(extensao);
-    
-    // Recebe o nome do arquivo digitado na linha de comando ou pede o nome do arquivo
-    do{
-	    if(argc >= 2)
-	        strcpy(narquivo, argv[1]);
-	    else {
-	    	do{
-	        	printf("--------------------------------------------------------\n");
-	        	printf("|  Forneça o nome do arquivo: ");
-	        	gets(narquivo);
-			}while(strchr(narquivo,'.') == NULL);
-	    }
-	}while(strlen(strchr(narquivo, '.')) > 4);
-	
-    // Copia a extensao do nome do arquivo na variável extensão
-    strcpy(extensao, strchr(narquivo,'.'));
-	
-	// Abre o arquivo
-    entrada = fopen(narquivo, "r");
-    if(entrada == NULL){
-        printf("|=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n");
-        printf("|  Não foi possível localizar o arquivo <%s> \n", narquivo);
-        printf("--------------------------------------------------------\n");
-        exit(1);
-    }
-    
-    // Tira a extensão do nome do arquivo
-	tiraExtensao(narquivo);
-	
-	// Recebe o tipo de conversão digitado na linha de comando ou pede o tipo de conversão
-    if(argc >= 3)
-            tipo = argv[3][0];
-    else{
-        printf("--------------------------------------------------------\n");
-        printf("|                                                      |\n");
-        printf("|   I -> O tipo de conversão deve ser o Invert.        |\n");
-		printf("|   C -> O tipo de conversão deve ser o Cript.         |\n");
-		printf("|   D -> Arquivo texto UNIX, gerar arquivo texto DOS.  |\n");
-		printf("|   U -> Arquivo texto DOS, gerar arquivo texto UNIX.  |\n");
-        printf("|                                                      |\n");
-		printf("--------------------------------------------------------\n");
-		printf("|     Escolha um tipo de conversão de arquivo          |\n");
-        printf("|       (LETRA MAIUSCULA PLEASE): ");
-		tipo = getche();
-		printf("                    |\n");
-		printf("--------------------------------------------------------\n");
-    }
-	
-    voltaaquimeu:
-    
-    // Faz a rotina de acordo com a escolha do tipo de conversão
-    switch(tipo){
-    	// Cria um arquivo complemento de 1 do arquivo de entrada
-        case 'I':
-            invert(narquivo, entrada, extensao);
-            break;
-		
-		// Cria um arquivo criptografado do arquivo de entrada
-        case 'C':
-            chave = (char*) malloc(20);
-            verificaAloc(chave);
-            if(argc >= 4)
-                strcpy(chave, argv[4]);
-            else{
-                printf("|     Digite a chave: ");
-                scanf("%s", chave);
-                printf("|=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-|\n");
-            }
-            cript(narquivo, entrada, extensao, chave);
-            free(chave);
-            break;
-            
-		// Converte um arquivo Unix para um arquivo Dos
-        case 'D':
-        	UnixToDos(narquivo, entrada);
-            break;
-
-		// Converte um arquivo Dos para um arquivo Unix
-        case 'U':
-        	DosToUnix(narquivo, entrada);
-            break;
-
-		// Se o usuário for burro e escolher um tipo inválido, pede para digitar até ser um tipo válido
-        default:
-            while(tipo!='I' && tipo!='C' && tipo!='D' && tipo!='U'){
-                printf("|  Tipo de conversão inválida! Digite novamente: ");
-                tipo = getche();
-                printf("     |\n");
-            }
-            printf("|=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-|\n");
-            goto voltaaquimeu;
-            break;
-    }
-	
-	// Libera espaço alocado
-	free(narquivo);
-	free(extensao);
-	
-	// Fechar o arquivo de entrada
-    fclose(entrada);
-    return 0;
-}
