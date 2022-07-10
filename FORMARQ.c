@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+void divider();
 void verificaAloc(char *arq);
 int tiraExtensao(char *s);
 void invert(char *nomearq, FILE *arq, char *ext);
@@ -34,7 +35,7 @@ int main(int argc, char *argv[]){
 		}
 	    else {
 	    	do{
-	        	printf("--------------------------------------------------------\n");
+	        	divider();
 	        	printf("|  Forneça o nome do arquivo: ");
 	        	gets(narquivo);
 			}while(strchr(narquivo,'.') == NULL);
@@ -48,9 +49,9 @@ int main(int argc, char *argv[]){
 	// Abre o arquivo
     entrada = fopen(narquivo, "r");
     if(entrada == NULL){
-        printf("|=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n");
+        divider();
         printf("|  Não foi possível localizar o arquivo <%s> \n", narquivo);
-        printf("--------------------------------------------------------\n");
+        divider();
         exit(1);
     }
     
@@ -63,22 +64,22 @@ int main(int argc, char *argv[]){
             f = 1;
     }
     else{
-        printf("--------------------------------------------------------\n");
+        divider();
         printf("|                                                      |\n");
         printf("|   I -> O tipo de conversão deve ser o Invert.        |\n");
 		printf("|   C -> O tipo de conversão deve ser o Cript.         |\n");
 		printf("|   D -> Arquivo texto UNIX, gerar arquivo texto DOS.  |\n");
 		printf("|   U -> Arquivo texto DOS, gerar arquivo texto UNIX.  |\n");
         printf("|                                                      |\n");
-		printf("--------------------------------------------------------\n");
+		divider();
 		printf("|     Escolha um tipo de conversão de arquivo          |\n");
-        printf("|       (LETRA MAIUSCULA PLEASE): ");
+        printf("|              (LETRA MAIUSCULA): ");
 		tipo = getche();
 		printf("                    |\n");
-		printf("--------------------------------------------------------\n");
+		divider();
     }
 	
-    voltaaquimeu:
+    loop:
     
     // Faz a rotina de acordo com a escolha do tipo de conversão
     switch(tipo){
@@ -96,7 +97,7 @@ int main(int argc, char *argv[]){
             else{
                 printf("|     Digite a chave: ");
                 scanf("%s", chave);
-                printf("|=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-|\n");
+                divider();
             }
             cript(narquivo, entrada, extensao, chave);
             free(chave);
@@ -112,15 +113,15 @@ int main(int argc, char *argv[]){
         	DosToUnix(narquivo, entrada);
             break;
 
-		// Se o usuário for burro e escolher um tipo inválido, pede para digitar até ser um tipo válido
+		// Se o usuário escolher um tipo inválido, pede para digitar até ser um tipo válido
         default:
             while(tipo!='I' && tipo!='C' && tipo!='D' && tipo!='U'){
                 printf("|  Tipo de conversão inválida! Digite novamente: ");
                 tipo = getche();
                 printf("     |\n");
             }
-            printf("|=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-|\n");
-            goto voltaaquimeu;
+            divider();
+            goto loop;
             break;
     }
 	
@@ -133,6 +134,9 @@ int main(int argc, char *argv[]){
     return 0;
 }
 
+void divider(){
+	printf("--------------------------------------------------------\n");
+}
 
 void verificaAloc(char *arq){
 	if(arq == NULL){
@@ -167,7 +171,7 @@ void invert(char *nomearq, FILE *arq, char *ext){
     saida = fopen(nomearq, "w");
     if(saida == NULL){
         printf("|              Falha ao criar o arquivo                |\n");
-        printf("|=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-|\n");
+        divider();
         exit(1);
     }
     
@@ -183,7 +187,7 @@ void invert(char *nomearq, FILE *arq, char *ext){
     // Fecha o arquivo de saída
     fclose(saida);
     printf("|           O arquivo %s foi criado        \n", nomearq);
-    printf("|=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-|\n");
+    divider();
 }
 
 void cript(char *nomearq, FILE *arq, char *ext, char *chave){
@@ -202,7 +206,7 @@ void cript(char *nomearq, FILE *arq, char *ext, char *chave){
     saida = fopen(nomearq, "w");
     if(saida == NULL){
         printf("|              Falha ao criar o arquivo                |\n");
-        printf("|=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-|\n");
+        divider();
         exit(1);
     }
     
@@ -224,7 +228,7 @@ void cript(char *nomearq, FILE *arq, char *ext, char *chave){
     // Fecha o arquivo de saída
     fclose(saida);
     printf("|           O arquivo %s foi criado        \n", nomearq);
-    printf("|=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-|\n");
+    divider();
 }
 
 void UnixToDos(char *nomearq, FILE *arq){
@@ -237,7 +241,7 @@ void UnixToDos(char *nomearq, FILE *arq){
     saida = fopen(nomearq, "w");
     if(saida == NULL){
         printf("|              Falha ao criar o arquivo                |\n");
-        printf("|=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-|\n");
+        divider();
         exit(1);
     }
     
@@ -254,7 +258,7 @@ void UnixToDos(char *nomearq, FILE *arq){
     // Fechar o arquivo de saída
     fclose(saida);
     printf("|           O arquivo %s foi criado        \n", nomearq);
-    printf("|=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-|\n");
+    divider();
 }
 
 void DosToUnix(char *nomearq, FILE *arq){
@@ -268,7 +272,7 @@ void DosToUnix(char *nomearq, FILE *arq){
     saida = fopen(nomearq, "w");
     if(saida == NULL){
         printf("|              Falha ao criar o arquivo                |\n");
-        printf("|=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-|\n");
+        divider();
         exit(1);
     }
     
@@ -284,7 +288,7 @@ void DosToUnix(char *nomearq, FILE *arq){
     // Fecha o arquivo de saída
     fclose(saida);
     printf("|           O arquivo %s foi criado        \n", nomearq);
-    printf("|=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-|\n");
+    divider();
 }
 
 
